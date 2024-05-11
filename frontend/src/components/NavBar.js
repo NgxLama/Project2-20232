@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { Container, Form, Row, Col, Image, NavDropdown } from 'react-bootstrap'
 import notification from '../assets/icons/notification.png'
 import messenger from '../assets/icons/messenger.png'
@@ -25,6 +25,17 @@ export default function NavBar() {
     navigate(`/profile/${id}`);
   }
 
+  const [searchValue, setSearchValue] = useState('');
+
+  const handleSearchChange = (event) => {
+    setSearchValue(event.target.value);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    navigate(`/findMovie?search=${searchValue}`)
+  };
+
   return (
     <Container className='p-2 border-bottom sticky-top' fluid style={{ height: '10%', backgroundColor: '#fff' }}>
       <Row>
@@ -33,8 +44,15 @@ export default function NavBar() {
             <Link className='me-2 mt-1' to={'/'}>
               <Image src={logo} style={{ width: '40px' }} />
             </Link>
-            <Form>
-              <Form.Control className='rounded-pill' type="text" placeholder="Tìm kiếm" style={{ height: '50px', width: '500px' }} />
+            <Form onSubmit={handleSearchSubmit}>
+              <Form.Control 
+                className='rounded-pill' 
+                type="text" 
+                placeholder="Tìm kiếm" 
+                style={{ height: '50px', width: '500px' }} 
+                value={searchValue}
+                onChange={handleSearchChange}
+              />
             </Form>
           </Container>
         </Col>

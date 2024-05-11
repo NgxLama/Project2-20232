@@ -27,3 +27,8 @@ export function updateProfile(userId, profile){
 export function getAllMovie() {
     return axios.get(`${API_BASE_URL}/getAllMovie`)
 }
+
+export function findMovie(search) {
+    // return axios.get(`${API_BASE_URL}/findMovie?search=${search}`)
+    return axios.get(`${API_BASE_URL}/findMovie${search}`)
+}

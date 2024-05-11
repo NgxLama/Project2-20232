@@ -13,7 +13,9 @@ import {
   setDoc,
   Timestamp
 } from 'firebase/firestore';
+import Movie from '../models/movieModel.js'
 
+// GET /getAllMovie
 export const getAllMovie = async (req, res) => {
     let movies = [];
     const movieDocs = await getDocs(collection(db, "movies"))
@@ -35,4 +37,26 @@ export const getAllMovie = async (req, res) => {
     res.status(200).json({
         movies
     })
+}
+
+// GET /findMovie?search=...
+export const findMovie = async (req, res) => {
+    // tạo dữ liệu cho việc tìm kiếm
+    let movies = [];
+    const options = {
+        keys: ['title', 'actors', 'director'],
+        threshold: 0.5
+    };
+    // lấy dữ liệu từ database
+    const movieDocs = await getDocs(collection(db, "movies"));
+    movieDocs.forEach((movie) => {
+        movies.push(new Movie(movie));
+    });
+    const fuse = new Fuse(movies, options);
+    let result = fuse.search(req.query.search);
+    result = result.map((obj) => obj.item);
+
+    res.status(200).json({
+        movies: result
+    });
 }
