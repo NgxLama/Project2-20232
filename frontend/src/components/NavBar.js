@@ -58,12 +58,13 @@ export default function NavBar() {
         </Col>
         <Col className='d-flex flex-row-reverse'>
           <NavDropdown title={<Image src={user} className='border p-1 ms-4' roundedCircle />} id="basic-nav-dropdown">
-            <NavDropdown.Item onClick={handleLogout}>Đăng xuất</NavDropdown.Item>
             <NavDropdown.Item onClick={handleProfile}>Thông tin cá nhân</NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item onClick={handleLogout}>Đăng xuất</NavDropdown.Item>
           </NavDropdown>
-          <Image className='border p-1 ms-4' src={notification} roundedCircle />
+          {/* <Image className='border p-1 ms-4' src={notification} roundedCircle />
           <Image className='border p-1 ms-4' src={messenger} roundedCircle />
-          <Image className='border p-1 ms-4' src={friends} roundedCircle />
+          <Image className='border p-1 ms-4' src={friends} roundedCircle /> */}
         </Col>
       </Row>
     </Container>
