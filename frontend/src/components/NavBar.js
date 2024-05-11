@@ -34,7 +34,7 @@ export default function NavBar() {
               <Image src={logo} style={{ width: '40px' }} />
             </Link>
             <Form>
-              <Form.Control className='rounded-pill' type="text" placeholder="Tìm kiếm" style={{ height: '50px' }} />
+              <Form.Control className='rounded-pill' type="text" placeholder="Tìm kiếm" style={{ height: '50px', width: '500px' }} />
             </Form>
           </Container>
         </Col>

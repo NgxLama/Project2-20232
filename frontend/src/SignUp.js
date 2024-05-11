@@ -25,7 +25,7 @@ export default function SignUp() {
         if (res.status === 200) {
           if (res.data.status) {
             toast.success(res.data.message)
-            navigate('/setup-account', {state: {user: res.data.user}})
+            navigate('/login', {state: {user: res.data.user}})
           }
           else {
             toast.error(res.data.message);

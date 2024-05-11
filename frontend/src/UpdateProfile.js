@@ -14,11 +14,12 @@ export default function UpdateProfile() {
   const [lastName, setLastName] = useState("");
   const [avatar, setAvatar] = useState();
   const [cover, setCover] = useState("");
+  const [phone, setPhone] = useState("");
   const [description, setDescription] = useState("");
   const [DOB, setDOB] = useState("");
   const [address, setAddress] = useState("");
   const [work, setWork] = useState("");
-  const [school, setSchool] = useState("");
+  const [gender, setGender] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = (e) => {
@@ -29,14 +30,16 @@ export default function UpdateProfile() {
     lastName && formData.append('lastName', lastName);
     avatar && formData.append('avatar', avatar);
     cover && formData.append('cover', cover);
+    phone && formData.append('phone', phone);
     description && formData.append('description', description);
     DOB && formData.append('DOB', DOB);
     address && formData.append('address', address);
     work && formData.append('work', work);
-    school && formData.append('school', school);
+    gender && formData.append('gender', gender);
     updateProfile(userId, formData)
       .then(res => {
-        toast.success(res.data.message)
+        toast.success(res.data.message);
+        window.location.reload();
       })
       .catch(err => {
         setErrorMessage(err.message);
@@ -47,6 +50,11 @@ export default function UpdateProfile() {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const handleGenderSelect = (e) => {
+    const selectedGender = (e.target.value === "Male") ? "Male" : "Female";
+    setGender(selectedGender);
+  };
 
   return (
     <>
@@ -87,13 +95,18 @@ export default function UpdateProfile() {
             </Row>
 
             <Form.Group className="mb-3" >
+              <Form.Label>Phone</Form.Label>
+              <Form.Control value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone" />
+            </Form.Group>
+
+            <Form.Group className="mb-3" >
               <Form.Label>Description</Form.Label>
               <Form.Control value={description} onChange={e => setDescription(e.target.value)} placeholder="Description" />
             </Form.Group>
 
-            <Form.Group className="mb-3" >
+            <Form.Group className="mb-3">
               <Form.Label>Date of Birth</Form.Label>
-              <Form.Control value={DOB} onChange={e => setDOB(e.target.value)} placeholder="Date of birth" />
+              <Form.Control type="date" value={DOB} onChange={e => setDOB(e.target.value)} placeholder="Date of birth" />
             </Form.Group>
 
             <Form.Group className="mb-3" >
@@ -103,18 +116,13 @@ export default function UpdateProfile() {
 
             <Row className="mb-3">
               <Form.Group as={Col} >
-                <Form.Label>Occupation</Form.Label>
+                <Form.Label>School/Workplace</Form.Label>
                 <Form.Control value={work} onChange={e => setWork(e.target.value)} />
               </Form.Group>
 
               <Form.Group as={Col} >
-                <Form.Label>School/Workplace</Form.Label>
-                <Form.Control value={school} onChange={e => setSchool(e.target.value)} />
-              </Form.Group>
-
-              <Form.Group as={Col} >
                 <Form.Label>Gender</Form.Label>
-                <Form.Select defaultValue="">
+                <Form.Select value={gender ? "Male" : "Female"} onChange={handleGenderSelect}>
                   <option>Male</option>
                   <option>Female</option>
                 </Form.Select>

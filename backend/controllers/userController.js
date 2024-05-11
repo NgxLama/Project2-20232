@@ -129,7 +129,7 @@ export const updateProfile = async (req, res) => {
   const coverImageFile = (req.files['cover']) ? req.files['cover'][0] : null;
   const avatarImageFile = (req.files['avatar']) ? req.files['avatar'][0] : null;
   // Tạo đối tượng chứa dữ liệu để truyền đi
-  const params = ['firstName', 'lastName', 'DOB', 'address', 'gender', 'school', 'work', 'description'];
+  const params = ['firstName', 'lastName', 'DOB', 'address', 'gender', 'work', 'description', 'phone'];
   let user = {};
   params.forEach((param) => {
     if (param in req.body) user[param] = req.body[param];
