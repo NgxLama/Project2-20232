@@ -23,3 +23,7 @@ export function getProfileByUserId(userId) {
 export function updateProfile(userId, profile){
     return axios.post(`${API_BASE_URL}/updateProfile/${userId}`, profile, { 'content-type': 'multipart/form-data' })
 }
+
+export function getAllMovie() {
+    return axios.get(`${API_BASE_URL}/getAllMovie`)
+}
