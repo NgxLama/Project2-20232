@@ -15,6 +15,33 @@ import {
 } from 'firebase/firestore';
 import Movie from '../models/movieModel.js'
 
+// GET /getMovieById/:id
+export const getMovieById = async (req, res) => {
+    const movieDoc = await getDoc(doc(db, "movies", req.params.id));
+    let movie = movieDoc.data();
+    movie.showtimes = [];
+
+    const q = query(collection(db, "showtimes"), where("movie_id", "==", req.params.id));
+    const showtimeDocs = await getDocs(q);
+
+    // Tạo một mảng các promise từ các yêu cầu dữ liệu
+    const showtimePromises = showtimeDocs.docs.map(async (showtime) => {
+        let tmp = showtime.data();
+        const roomDoc = await getDoc(doc(db, "rooms", tmp.room_id));
+        for (let key in roomDoc.data()) {
+            tmp[key] = roomDoc.data()[key];
+        }
+        return tmp;
+    });
+
+    // Đợi cho tất cả các promise hoàn thành
+    const showtimes = await Promise.all(showtimePromises);
+
+    movie.showtimes = showtimes;
+
+    res.status(200).json({ movie });
+}
+
 // GET /getAllMovie
 export const getAllMovie = async (req, res) => {
     let movies = [];
@@ -59,4 +86,15 @@ export const findMovie = async (req, res) => {
     res.status(200).json({
         movies: result
     });
+}
+
+// GET /getAllSeatsOfRoom
+export const getAllSeatsOfRoom = async (req, res) => {
+    const q = query(collection(db, "seats"), where("room_id", "==", req.params.id));
+    const seatDocs = await getDocs(q);
+    let seats = [];
+    seatDocs.forEach((seat) => {
+        seats.push(seat.data());
+    });
+    res.status(200).json({ seats });
 }

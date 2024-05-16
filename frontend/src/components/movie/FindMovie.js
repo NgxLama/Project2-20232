@@ -2,9 +2,9 @@ import { Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { findMovie } from "../services/API";
-import CradLayout from "../Home/CradLayout";
-import NavBar from "./NavBar";
+import { findMovie } from "../../services/API";
+import CradLayout from "../../Home/CradLayout";
+import NavBar from "../NavBar";
 
 const FindMovie = () => {
   const [movies, setMovies] = useState();

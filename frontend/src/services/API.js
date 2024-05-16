@@ -32,3 +32,11 @@ export function findMovie(search) {
     // return axios.get(`${API_BASE_URL}/findMovie?search=${search}`)
     return axios.get(`${API_BASE_URL}/findMovie${search}`)
 }
+
+export function getMovieById(id) {
+    return axios.get(`${API_BASE_URL}/getMovieById/${id}`)
+}
+
+export function getAllSeatsOfRoom(id) {
+    return axios.get(`${API_BASE_URL}/getAllSeatsOfRoom/${id}`)
+}
