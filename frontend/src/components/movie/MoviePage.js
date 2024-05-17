@@ -13,8 +13,8 @@ function MoviePage() {
   const params = useParams();
   const nav = useNavigate();
 
-  const booking = (room_id) => {
-    nav(`/room/${room_id}`);
+  const booking = (showtime) => {
+    nav(`/room/${showtime.room_id}?showtime_id=${showtime.id}`);
   }
 
   useEffect(() => {
@@ -145,7 +145,7 @@ function MoviePage() {
                       <label>{showtime.name}</label>
                     </Col>
                     <Col classname='col-md-5 d-flex align-items-center'>
-                      <Button onClick={() => booking(showtime.room_id)} className='btn btn-success' style={{ width: "100%" }}>Đặt vé</Button>
+                      <Button onClick={() => booking(showtime)} className='btn btn-success' style={{ width: "100%" }}>Đặt vé</Button>
                     </Col>
                   </Row>
                   <Row className='mt-2'>

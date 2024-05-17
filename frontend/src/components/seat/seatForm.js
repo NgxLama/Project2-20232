@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col, Button, Toast } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import Modal from "react-bootstrap/Modal";
+import { toast } from 'react-toastify';
 import { getAllSeatsOfRoom } from '../../services/API';
 import NavBar from '../NavBar';
+import { create_payment_url } from './create_payment';
 const SeatForm = () => {
 
   const [seats, setSeats] = useState(null);
+  const [pickedSeats, setPickedSeats] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const closeModal = () => {
@@ -15,9 +18,9 @@ const SeatForm = () => {
   
   const OrderedSeat = useRef(null);
   const [tongGia, setTongGia] = useState(0);
+  const [seatString, setSeatString] = useState('');
   const params = useParams();
   const room_id = params.id;
-  const navigate = useNavigate();
 
   useEffect(() => {
     getAllSeatsOfRoom(room_id)
@@ -79,13 +82,34 @@ const SeatForm = () => {
 
     const tinhTongGia = () => {
         let tongGiaMoi = 0;
+        let tmp = [];
         seats?.forEach((seat) => {
           if (seat.picked === true) {
             tongGiaMoi += parseInt(seat.price);
+            tmp.push(seat);
           }
         });
         setTongGia(tongGiaMoi);
+        setPickedSeats(tmp);
+        setSeatString(tmp.map((seat) => seat.seat_number).join(' '));
       };
+
+    const pay = () => {
+      if (tongGia == 0) {
+        toast.error('Hãy chọn vé');
+        return;
+      }
+      const parsedUrl = new URL(window.location.href);
+      const queryParams = parsedUrl.searchParams;
+      const order = {
+        seats: pickedSeats.map((seat) => seat.id),
+        showtime_id: queryParams.get('showtime_id'),
+        user_id: localStorage.getItem('user_id'),
+        amount: tongGia
+      }
+      localStorage.setItem('order', order);
+      create_payment_url(order);
+    };
 
   const renderGhe = () => {
     if (isLoading) {
@@ -180,7 +204,7 @@ const SeatForm = () => {
       </Row>
       <Row className="justify-content-center mt-3">
         <Col className="col-md-9">
-          <Button className="btn btn-success mt-3" onClick={() => {}} style={{ width: '100%' }}>
+          <Button className="btn btn-success mt-3" onClick={() => {pay()}} style={{ width: '100%' }}>
             Thanh toán
           </Button>
         </Col>
@@ -192,12 +216,14 @@ const SeatForm = () => {
       <Row className="mt-3">
         <Button className="col-md-1" variant="success" disabled />
         <span className="col-md-3 ml-1">Ghế chọn</span>
-        <span className="col-md-1 ml-1">Tổng giá:</span>
+        <span className="col-md-3 ml-1">Tổng giá:</span>
         <span className="col-md-1">{tongGia}</span>
       </Row>
       <Row className="mt-3">
         <Button className="col-md-1" variant="secondary" disabled />
         <span className="col-md-3 ml-1">Ghế đã được đặt</span>
+        <span className="col-md-3 ml-1">Ghế đã chọn:</span>
+        <span className="col-md-1">{seatString}</span>
       </Row>
       <Modal show={showModal} onHide={closeModal}>
         <Modal.Body>

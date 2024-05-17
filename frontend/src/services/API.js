@@ -40,3 +40,7 @@ export function getMovieById(id) {
 export function getAllSeatsOfRoom(id) {
     return axios.get(`${API_BASE_URL}/getAllSeatsOfRoom/${id}`)
 }
+
+export function savePayment(order) {
+    return axios.post(`${API_BASE_URL}/savePayment`, order, { 'content-type': 'multipart/form-data' })
+}

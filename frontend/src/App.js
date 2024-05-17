@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./PrivateRoute"
 import Home from "./Home/Home"
+import ReturnPage from "./components/seat/vnpay_return"
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/findMovie" element={<FindMovie />}/>
         <Route path="/booking/:id" element={<MoviePage />}/>
         <Route path="/room/:id" element={<SeatForm />}/>
+        <Route path="/return_url" element={<ReturnPage />}/>
         // Redirect to login page if user is not logged in
         <Route path="/" element={<PrivateRoute />}>
           <Route index element={<Home />} />

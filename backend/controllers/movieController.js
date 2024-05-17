@@ -11,7 +11,8 @@ import {
   query,
   where,
   setDoc,
-  Timestamp
+  Timestamp,
+  orderBy
 } from 'firebase/firestore';
 import Movie from '../models/movieModel.js'
 
@@ -27,6 +28,7 @@ export const getMovieById = async (req, res) => {
     // Tạo một mảng các promise từ các yêu cầu dữ liệu
     const showtimePromises = showtimeDocs.docs.map(async (showtime) => {
         let tmp = showtime.data();
+        tmp.id = showtime.id;
         const roomDoc = await getDoc(doc(db, "rooms", tmp.room_id));
         for (let key in roomDoc.data()) {
             tmp[key] = roomDoc.data()[key];
@@ -94,7 +96,27 @@ export const getAllSeatsOfRoom = async (req, res) => {
     const seatDocs = await getDocs(q);
     let seats = [];
     seatDocs.forEach((seat) => {
-        seats.push(seat.data());
+        let tmp = seat.data();
+        tmp.id = seat.id;
+        seats.push(tmp);
     });
     res.status(200).json({ seats });
+}
+
+// POST /savePayment
+export const savePayment = async (req, res) => {
+    await addDoc(collection(db, "orders"), {
+        showtime_id: req.body.showtime_id,
+        seats: req.body.seats,
+        amount: req.body.amount,
+        user_id: req.body.user_id
+    })
+    req.body.seats.forEach(async (seat) => {
+        await updateDoc(doc(db, "seats", seat), {
+            status: true
+        })
+    });
+    res.status(200).json({
+        status: true
+    });
 }
