@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Modal from "react-bootstrap/Modal";
 import { toast } from 'react-toastify';
 import { getAllSeatsOfRoom } from '../../services/API';
+import { savePayment } from '../../services/API';
 import NavBar from '../NavBar';
 import { create_payment_url } from './create_payment';
 const SeatForm = () => {
@@ -104,11 +105,14 @@ const SeatForm = () => {
       const order = {
         seats: pickedSeats.map((seat) => seat.id),
         showtime_id: queryParams.get('showtime_id'),
-        user_id: localStorage.getItem('user_id'),
-        amount: tongGia
+        user_id: localStorage.getItem('userId'),
+        amount: tongGia,
+        status: false
       }
-      localStorage.setItem('order', order);
-      create_payment_url(order);
+      savePayment(order)
+        .then((res) => {
+          create_payment_url(res.data.id, order);
+        })
     };
 
   const renderGhe = () => {

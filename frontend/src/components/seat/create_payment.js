@@ -18,13 +18,13 @@ function sortObject(obj) {
     return sorted;
 }
 
-export const create_payment_url = (pay) => {
+export const create_payment_url = (id, pay) => {
     var ipAddr = '192.168.1.1';
     
     var tmnCode = 'J4C4PZ9N';
     var secretKey = 'CM9GZYXQVOYNILPP2D5GO1QN15P1YIE9';
     var vnpUrl = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
-    var returnUrl = 'http://localhost:3000/return_url';
+    var returnUrl = `http://localhost:3000/return_url/${id}`;
 
     var date = new Date();
 
@@ -60,5 +60,5 @@ export const create_payment_url = (pay) => {
     vnpUrl += '?' + QueryString.stringify(vnp_Params, { encode: false });
 
     console.log(vnpUrl);
-    //window.location.href = vnpUrl;
+    window.location.href = vnpUrl;
 }

@@ -44,3 +44,11 @@ export function getAllSeatsOfRoom(id) {
 export function savePayment(order) {
     return axios.post(`${API_BASE_URL}/savePayment`, order, { 'content-type': 'multipart/form-data' })
 }
+
+export function updatePayment(id) {
+    return axios.post(`${API_BASE_URL}/updatePayment/${id}`)
+}
+
+export function getOrderById(id) {
+    return axios.get(`${API_BASE_URL}/getOrderById/${id}`)
+}

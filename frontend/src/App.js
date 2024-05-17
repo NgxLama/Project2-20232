@@ -24,7 +24,7 @@ function App() {
         <Route path="/findMovie" element={<FindMovie />}/>
         <Route path="/booking/:id" element={<MoviePage />}/>
         <Route path="/room/:id" element={<SeatForm />}/>
-        <Route path="/return_url" element={<ReturnPage />}/>
+        <Route path="/return_url/:id" element={<ReturnPage />}/>
         // Redirect to login page if user is not logged in
         <Route path="/" element={<PrivateRoute />}>
           <Route index element={<Home />} />

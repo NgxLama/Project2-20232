@@ -6,7 +6,9 @@ import {
   findMovie, 
   getMovieById,
   getAllSeatsOfRoom,
-  savePayment
+  savePayment,
+  updatePayment,
+  getOrderById
 } from '../controllers/movieController.js';
 
 const router = express.Router();
@@ -17,5 +19,7 @@ router.get('/findMovie', upload.none(), findMovie);
 router.get('/getMovieById/:id', upload.none(), getMovieById);
 router.get('/getAllSeatsOfRoom/:id', upload.none(), getAllSeatsOfRoom);
 router.post('/savePayment', upload.none(), savePayment);
+router.post('/updatePayment/:id', upload.none(), updatePayment);
+router.get('/getOrderById/:id', upload.none(), getOrderById)
 
 export default router;

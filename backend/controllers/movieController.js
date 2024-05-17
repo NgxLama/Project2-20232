@@ -105,18 +105,51 @@ export const getAllSeatsOfRoom = async (req, res) => {
 
 // POST /savePayment
 export const savePayment = async (req, res) => {
-    await addDoc(collection(db, "orders"), {
+    const orderDoc = await addDoc(collection(db, "orders"), {
         showtime_id: req.body.showtime_id,
         seats: req.body.seats,
         amount: req.body.amount,
-        user_id: req.body.user_id
+        user_id: req.body.user_id,
+        status: req.body.status
     })
-    req.body.seats.forEach(async (seat) => {
+    res.status(200).json({
+        status: true,
+        id: orderDoc.id
+    });
+}
+
+// POST /updatePayment/:id
+export const updatePayment = async (req, res) => {
+    const orderDoc = await getDoc(doc(db, "orders", req.params.id));
+    await updateDoc(orderDoc.ref, {
+        status: true
+    })
+    orderDoc.data().seats.forEach(async (seat) => {
         await updateDoc(doc(db, "seats", seat), {
             status: true
         })
-    });
+    })
     res.status(200).json({
         status: true
+    });
+}
+
+// GET /getOrderById/:id
+export const getOrderById = async (req, res) => {
+    const orderDoc = await getDoc(doc(db, "orders", req.params.id));
+    const showtimeDoc = await getDoc(doc(db, "showtimes", orderDoc.data().showtime_id));
+    const roomDoc = await getDoc(doc(db, "rooms", showtimeDoc.data().room_id));
+    const movieDoc = await getDoc(doc(db, "movies", showtimeDoc.data().movie_id));
+    let seats = [];
+    await Promise.all(orderDoc.data().seats.map(async (seat) => {
+        let tmp = await getDoc(doc(db, "seats", seat));
+        seats.push(tmp.data());
+    }));
+    res.status(200).json({
+        amount: orderDoc.data().amount,
+        showtime: showtimeDoc.data(),
+        movie: movieDoc.data(),
+        room: roomDoc.data(),
+        seats
     });
 }
