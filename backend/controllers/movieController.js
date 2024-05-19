@@ -137,19 +137,57 @@ export const updatePayment = async (req, res) => {
 // GET /getOrderById/:id
 export const getOrderById = async (req, res) => {
     const orderDoc = await getDoc(doc(db, "orders", req.params.id));
-    const showtimeDoc = await getDoc(doc(db, "showtimes", orderDoc.data().showtime_id));
-    const roomDoc = await getDoc(doc(db, "rooms", showtimeDoc.data().room_id));
-    const movieDoc = await getDoc(doc(db, "movies", showtimeDoc.data().movie_id));
-    let seats = [];
-    await Promise.all(orderDoc.data().seats.map(async (seat) => {
-        let tmp = await getDoc(doc(db, "seats", seat));
-        seats.push(tmp.data());
-    }));
+    if (!orderDoc.exists()) {
+        res.status(200).json({
+            status: true
+        })
+    }
+    else {
+        const showtimeDoc = await getDoc(doc(db, "showtimes", orderDoc.data().showtime_id));
+        const roomDoc = await getDoc(doc(db, "rooms", showtimeDoc.data().room_id));
+        const movieDoc = await getDoc(doc(db, "movies", showtimeDoc.data().movie_id));
+        let seats = [];
+        await Promise.all(orderDoc.data().seats.map(async (seat) => {
+            let tmp = await getDoc(doc(db, "seats", seat));
+            seats.push(tmp.data());
+        }));
+        res.status(200).json({
+            id: orderDoc.id,
+            amount: orderDoc.data().amount,
+            showtime: showtimeDoc.data(),
+            movie: movieDoc.data(),
+            room: roomDoc.data(),
+            seats
+        });
+    }
+}
+
+// GET /getAllOrdersOfUser/:id
+export const getAllOrdersOfUser = async (req, res) => {
+    const q = query(collection(db, "orders"), where("user_id", "==", req.params.id), where("status", "==", true));
+    const orderDocs = await getDocs(q);
+    let orders = [];
+    if (!orderDocs.empty) {
+        orderDocs.forEach((orderDoc) => {
+            orders.push(orderDoc.id);
+        })
+    }
     res.status(200).json({
-        amount: orderDoc.data().amount,
-        showtime: showtimeDoc.data(),
-        movie: movieDoc.data(),
-        room: roomDoc.data(),
-        seats
-    });
+        orders
+    })
+}
+
+// POST /deleteOrderById/:id
+export const deleteOrderById = async (req, res) => {
+    deleteDoc(doc(db, "orders", req.params.id))
+        .then(() => {
+            res.status(200).json({
+                status: true
+            });
+        })
+        .catch((error) => {
+            res.status(400).json({
+                status: false
+            });
+        });
 }

@@ -25,6 +25,11 @@ export default function NavBar() {
     navigate(`/profile/${id}`);
   }
 
+  const handleOrder = () => {
+    let id = localStorage.getItem('userId');
+    navigate(`/order/${id}`);
+  }
+
   const [searchValue, setSearchValue] = useState('');
 
   const handleSearchChange = (event) => {
@@ -59,6 +64,7 @@ export default function NavBar() {
         <Col className='d-flex flex-row-reverse'>
           <NavDropdown title={<Image src={user} className='border p-1 ms-4' roundedCircle />} id="basic-nav-dropdown">
             <NavDropdown.Item onClick={handleProfile}>Thông tin cá nhân</NavDropdown.Item>
+            <NavDropdown.Item onClick={handleOrder}>Lịch sử đặt vé</NavDropdown.Item>
             <NavDropdown.Divider />
             <NavDropdown.Item onClick={handleLogout}>Đăng xuất</NavDropdown.Item>
           </NavDropdown>

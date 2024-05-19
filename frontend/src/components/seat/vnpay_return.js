@@ -1,9 +1,10 @@
 import NavBar from "../NavBar";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Table } from "react-bootstrap";
 import QRCode from 'qrcode.react';
 import { 
     updatePayment,
-    getOrderById
+    getOrderById,
+    deleteOrderById
  } from "../../services/API";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -30,9 +31,9 @@ const ReturnPage = () => {
 
     if (queryParams.get('vnp_TransactionStatus') == '00') {
         const qr = params.id;
-        //updatePayment(params.id);
+        updatePayment(params.id);
         return (
-            <Container>
+            <Container fluid className='p-0 position-relative'>
                 <NavBar />
                 <Container>
                     <Container>
@@ -82,29 +83,28 @@ const ReturnPage = () => {
                                     <hr />
                                 </Col>
                             </Row>
-                            <Row>
-                                <Col>Tên ghế</Col>
-                                <Col>Loại ghế</Col>
-                                <Col>Số tiền</Col>
-                            </Row>
+                            <Table bordered responsive className="table-responsive" style={{marginTop: 15}}>
+                                <thead>
+                                    <tr>
+                                        <th>Tên ghế</th>
+                                        <th>Loại ghế</th>
+                                        <th>Số tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                             {
                                 order.seats.map((seat) => {
                                     return (
-                                        <>
-                                            <Row className='mt-1'>
-                                                <Col>
-                                                
-                                                </Col>
-                                            </Row>
-                                            <Row>
-                                                <Col>{seat.seat_number}</Col>
-                                                <Col>{seat.seat_type}</Col>
-                                                <Col>{seat.price}</Col>
-                                            </Row>
-                                        </>
+                                        <tr key={seat.seat_number}>
+                                            <td>{seat.seat_number}</td>
+                                            <td>{seat.seat_type}</td>
+                                            <td>{seat.price}</td>
+                                        </tr>
                                     )
                                 })
                             }
+                                </tbody>
+                            </Table>
                             <Row className='mt-1'>
                                 <Col>
                                     <hr />
@@ -121,6 +121,8 @@ const ReturnPage = () => {
         )
     }
     else {
+        const qr = params.id;
+        deleteOrderById(params.id);
         return (
             <Container>
                 <NavBar />

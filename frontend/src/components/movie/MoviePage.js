@@ -43,13 +43,17 @@ function MoviePage() {
       <NavBar />
       <Row className="mt-2">
         <Col>
-          <h3 style={{marginBottom: 30, marginTop: 30}}>{movie?.title}</h3>
+          <h2 style={{marginBottom: 30, marginTop: 10}}>{movie?.title}</h2>
         </Col>
       </Row>
       <Row>
         <Col>
           {/* <img src={movie?.poster} alt="" style={{ width: 300 }} /> */}
-          <iframe title="Trailer" width="560" height="315" src={movie.trailer} frameBorder="0" allow="autoplay; encrypted-media" allowFullScreen style={{ marginBottom: '10px' }}></iframe>
+          <iframe title="Trailer" width="600" height="315" src={movie.trailer} frameBorder="0" allow="autoplay; encrypted-media" allowFullScreen style={{ marginBottom: '10px' }}></iframe>
+          <div style={{marginTop: 10, width: 600}}>
+            <h4>Giới thiệu</h4>
+            <p>{movie?.description}</p>
+          </div>
         </Col>
         <Col>
           <Row className='mt-2'>

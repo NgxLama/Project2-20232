@@ -19,7 +19,7 @@ function sortObject(obj) {
 }
 
 export const create_payment_url = (id, pay) => {
-    var ipAddr = '192.168.1.1';
+    var ipAddr = '13.160.92.202';
     
     var tmnCode = 'J4C4PZ9N';
     var secretKey = 'CM9GZYXQVOYNILPP2D5GO1QN15P1YIE9';
@@ -50,6 +50,7 @@ export const create_payment_url = (id, pay) => {
     vnp_Params['vnp_ReturnUrl'] = returnUrl;
     vnp_Params['vnp_IpAddr'] = ipAddr;
     vnp_Params['vnp_CreateDate'] = createDate;
+    vnp_Params['vnp_ExpireDate'] = dateFormat(date.getTime() + 60 * 60000, 'yyyymmddHHmmss');
 
     vnp_Params = sortObject(vnp_Params);
 

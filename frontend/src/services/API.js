@@ -52,3 +52,11 @@ export function updatePayment(id) {
 export function getOrderById(id) {
     return axios.get(`${API_BASE_URL}/getOrderById/${id}`)
 }
+
+export function getAllOrdersOfUser(id) {
+    return axios.get(`${API_BASE_URL}/getAllOrdersOfUser/${id}`)
+}
+
+export function deleteOrderById(id) {
+    return axios.post(`${API_BASE_URL}/deleteOrderById/${id}`)
+}
