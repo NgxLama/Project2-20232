@@ -46,7 +46,7 @@ export const sendNotificationEmail = (email) => {
             </ul>
             <p>Cảm ơn bạn đã tham gia cùng chúng tôi!</p>
             <p>Trân trọng,</p>
-            <p>HUST CENEMA</p>
+            <p>HUST CINEMA</p>
         </div>
         </body>
         </html>
