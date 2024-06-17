@@ -21,14 +21,14 @@ const SidebarComponent = () => {
       <Nav className="flex-column">
         <ul className="list-unstyled mb-4">
           <li className="mb-3">
-            <Link
+            {/* <Link
               to="/"
               className="text-white text-decoration-none d-block p-3 rounded"
               onClick={() => handleClick("/")}
               style={{ backgroundColor:`${activeLink === '/' ? 'rgba(0, 160, 255, 1)' : 'rgba(0,0,0,0.1)'}` }}
             >
               Dashboard
-            </Link>
+            </Link> */}
           </li>
           <li className="mb-3">
             <Link
@@ -75,7 +75,15 @@ const SidebarComponent = () => {
               Room
             </Link>
           </li>
-          {/* Add more sidebar links here */}
+          <li className="mb-3">
+            <Link
+              to="/report"
+              className="text-white text-decoration-none d-block p-3 rounded"
+              style={{ backgroundColor:`${activeLink === '/report' ? 'rgba(0, 160, 255, 1)' : 'rgba(0,0,0,0.1)'}` }}
+            >
+              Report
+            </Link>
+          </li>
         </ul>
       </Nav>
     </div>

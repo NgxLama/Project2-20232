@@ -21,6 +21,8 @@ const NavbarComponent = () => {
               return "Room";
             case "/user":
               return "User";
+            case "/report":
+              return "Report";
             default:
               return "Home";
           }

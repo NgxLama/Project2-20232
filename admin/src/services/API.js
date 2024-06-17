@@ -96,3 +96,27 @@ export function deleteOrderById(id) {
 export function getAllProfiles() {
     return axios.get(`${API_BASE_URL}/getAllProfiles`)
 }
+
+export function appoint(id) {
+    return axios.put(`${API_BASE_URL}/appoint/${id}`)
+}
+
+export function dismiss(id) {
+    return axios.put(`${API_BASE_URL}/dismiss/${id}`)
+}
+
+export function getAllSeatsOfRoom(id, showtime_id) {
+    return axios.get(`${API_BASE_URL}/getAllSeatsOfRoom/${id}?showtime_id=${showtime_id}`)
+}
+
+export function getLayoutById(id) {
+    return axios.get(`${API_BASE_URL}/getLayoutById/${id}`)
+}
+
+export function getLayoutById2(id) {
+    return axios.get(`${API_BASE_URL}/getLayoutById2/${id}`)
+}
+
+export function getAmount(id) {
+    return axios.get(`${API_BASE_URL}/getAmount/${id}`)
+}

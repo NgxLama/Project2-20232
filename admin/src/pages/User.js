@@ -4,6 +4,8 @@ import { getAllShowtimes, getAllRooms, getAllMovie,getAllProfiles } from '../ser
 import { Table } from 'react-bootstrap'; 
 import SidebarComponent from '../components/SideBar';
 import NavbarComponent from '../components/NavBar';
+import Appoint from '../components/Appoint';
+import Dismiss from '../components/Dismiss';
 
 const User = () => {
     const [profiles, setProfiles] = useState([]);
@@ -22,18 +24,18 @@ const User = () => {
             });
     }, []);
 
-    // const loadShowtimes = () => {
-    //     setIsLoading(true);
-    //     getAllShowtimes()
-    //         .then(response => {
-    //             setShowtimes(response.data);
-    //             setIsLoading(false);
-    //         })
-    //         .catch(error => {
-    //             setError(error.message);
-    //             setIsLoading(false);
-    //         });
-    // };
+    const onUpdate = () => {
+        setIsLoading(true);
+        getAllProfiles()
+        .then(response => {
+            setProfiles(response.data);
+            setIsLoading(false);
+        })
+        .catch(error => {
+            setError(error.message);
+            setIsLoading(false);
+        });
+    };
 
 
     if (isLoading) {
@@ -54,7 +56,7 @@ const User = () => {
                     <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '20px', paddingBottom: '20px' }}>
                         {/* <AddShowtime onAdd={loadShowtimes} /> */}
                     </div>
-                    <Table striped bordered hover>
+                    <Table striped bordered hover style={{ maxWidth: '98%' }}>
                         <thead>
                             <tr>
                                 <th>Email</th>
@@ -62,7 +64,7 @@ const User = () => {
                                 <th>Phone</th>
                                 <th>Gender</th>
                                 <th>role</th>
-                                <th>Actions</th>
+                                <th style={{ width: "10%" }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -75,7 +77,8 @@ const User = () => {
                                     <td>{profile.role}</td>
                                     <td>
                                         <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                                        a
+                                            {profile.role==='user' ?<Appoint user={profile} onUpdate={onUpdate}/>
+                                            : <Dismiss user={profile} onUpdate={onUpdate}/>}
                                         </div>
                                     </td>
                                 </tr>

@@ -20,7 +20,9 @@ import {
   deleteShowtimeById,
   updateShowtimeById,
   getLayoutById,
-  getAllOrders
+  getAllOrders,
+  getLayoutById2,
+  getAmount
 } from '../controllers/movieController.js';
 
 const router = express.Router();
@@ -45,5 +47,7 @@ router.get('/getAllShowtimes', upload.none(), getAllShowtimes);
 router.delete('/deleteShowtimeById/:id', upload.none(), deleteShowtimeById);
 router.put('/updateShowtimeById/:id', upload.none(), updateShowtimeById);
 router.get('/getLayoutById/:id', upload.none(), getLayoutById);
+router.get('/getLayoutById2/:id', upload.none(), getLayoutById2);
+router.get('/getAmount/:id', upload.none(), getAmount);
 
 export default router;

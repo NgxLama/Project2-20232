@@ -332,3 +332,41 @@ export const getAllProfiles = async (req, res) => {
       res.status(500).send('Internal Server Error');
     }
 }
+
+//PUT /appoint
+export const appoint = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const profileRef = dbadmin.collection('profiles').doc(id);
+    
+    // Update the role field to 'normal'
+    await profileRef.update({
+      role: 'admin'
+    });
+
+    res.status(200).send('Appoint successfully');
+  } catch (error) {
+    console.error('Error updating role:', error);
+    res.status(500).send('Error updating role');
+  }
+
+}
+
+//PUT /dismiss
+export const dismiss = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const profileRef = dbadmin.collection('profiles').doc(id);
+    
+    // Update the role field to 'normal'
+    await profileRef.update({
+      role: 'user'
+    });
+
+    res.status(200).send('Dismiss successfully');
+  } catch (error) {
+    console.error('Error updating role:', error);
+    res.status(500).send('Error updating role');
+  }
+
+}

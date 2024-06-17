@@ -4,7 +4,7 @@ import UpdateShowtime from '../components/UpdateShowtime';
 import ShowtimeComponent from '../components/ShowtimeComponent';
 import DeleteShowtime from '../components/DeleteShowtime';
 import { getAllShowtimes, deleteShowtimeById, getAllRooms, getAllMovie } from '../services/API';
-import { Table } from 'react-bootstrap'; // Import Table component
+import { Table } from 'react-bootstrap';
 import SidebarComponent from '../components/SideBar';
 import NavbarComponent from '../components/NavBar';
 
@@ -20,6 +20,7 @@ const Showtimes = () => {
     useEffect(() => {
         getAllShowtimes()
             .then(response => {
+                
                 setShowtimes(response.data);
                 setIsLoading(false);
             })
@@ -85,7 +86,7 @@ const Showtimes = () => {
                     <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '20px', paddingBottom: '20px' }}>
                         <AddShowtime onAdd={loadShowtimes} />
                     </div>
-                    <Table striped bordered hover>
+                    <Table striped bordered hover style={{ maxWidth: '98%' }}>
                         <thead>
                             <tr>
                                 <th>Movie Title</th>
@@ -100,8 +101,8 @@ const Showtimes = () => {
                                 <tr key={showtime.id}>
                                     <td>{movies.find(movie => movie.id === showtime.movie_id)?.title}</td>
                                     <td>{rooms.find(room => room.id === showtime.room_id)?.name}</td>
-                                    <td>{(showtime.start_time)}</td>
-                                    <td>{showtime.end_time}</td>
+                                    <td>{showtime.formattedStartTime}</td>
+                                    <td>{showtime.formattedEndTime}</td>
                                     <td>
                                         <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                                             {/* <UpdateShowtime showtime={showtime} onUpdate={loadShowtimes}/> */}

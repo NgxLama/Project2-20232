@@ -16,6 +16,7 @@ export default function Home() {
             <SidebarComponent />
             <NavbarComponent />
             <div style={{ marginTop: '70px', marginLeft: '280px' }}>
+                <h2>Welcome to </h2>
             </div>
         </div>
 

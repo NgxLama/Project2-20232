@@ -9,7 +9,9 @@ import {
   getAllProfiles,
   updateProfile,
   getnameAndEmail,
-  loginAdmin
+  loginAdmin,
+  appoint,
+  dismiss
 } from '../controllers/userController.js';
 
 const router = express.Router();
@@ -26,6 +28,8 @@ router.post('/updateProfile/:idUser', upload.fields([
   { name: 'avatar', maxCount: 1 }
   ]), updateProfile);
 router.get('/getnameAndEmail', upload.none(), getnameAndEmail)
+router.put('/appoint/:id', upload.none(), appoint)
+router.put('/dismiss/:id', upload.none(), dismiss)
 
 
 export default router;

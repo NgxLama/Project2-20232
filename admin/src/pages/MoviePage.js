@@ -79,14 +79,18 @@ function MoviePage() {
               <h2 style={{ marginBottom: 30, marginTop: 10 }}>{movie?.title}</h2>
             </Col>
             <Col>
-              <Button onClick={handleUpdate}>
-                Update
-              </Button>
+              
             </Col>
             <Col>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+            <Button onClick={handleUpdate}>
+                Update
+              </Button>
+              
               <Button onClick={handleDelete}>
                 Delete
               </Button>
+              </div>
             </Col>
           </Row>
           <Row>

@@ -22,7 +22,7 @@ import Movie from '../models/movieModel.js'
 export const getMovieById = async (req, res) => {
     const movieDoc = await getDoc(doc(db, "movies", req.params.id));
     let movie = movieDoc.data();
-    movie.showtimes = [];
+    // movie.showtimes = [];
 
     const q = query(collection(db, "showtimes"), where("movie_id", "==", req.params.id));
     const showtimeDocs = await getDocs(q);
@@ -108,12 +108,14 @@ export const getAllSeatsOfRoom = async (req, res) => {
 
 // POST /savePayment
 export const savePayment = async (req, res) => {
+    const now = new Date();
     const orderDoc = await addDoc(collection(db, "orders"), {
         showtime_id: req.body.showtime_id,
         seats: req.body.seats,
         amount: req.body.amount,
         user_id: req.body.user_id,
-        status: req.body.status
+        status: req.body.status,
+        created_at: now
     })
     res.status(200).json({
         status: true,
@@ -356,8 +358,8 @@ export const getAllRooms = async (req, res) => {
 
         const conflictingShowtimesSnapshot = await dbadmin.collection('showtimes')
             .where('room_id', '==', room_id)
-            .where('start_time', '<=', end_time)
-            .where('end_time', '>=', start_time)
+            .where('startTime', '<=', endTime)
+            .where('endTime', '>=', startTime)
             .get();
 
         if (!conflictingShowtimesSnapshot.empty) {
@@ -368,12 +370,14 @@ export const getAllRooms = async (req, res) => {
         // Add a new document to the 'showtimes' collection
         const showtimeData = {
             room_id,
-            start_time: startTime,
+            start_time: start_time,
             movie_id,
-            end_time: endTime,
+            end_time: end_time,
+            startTime: startTime,
+            endTime: endTime,
         };
 
-        const showtimeRef = await dbadmin.collection('showtimes').add(req.body);
+        const showtimeRef = await dbadmin.collection('showtimes').add(showtimeData);
 
         // Fetch the 'layout' subcollection from the specified room document
         const roomDocumentRef = dbadmin.collection('rooms').doc(room_id);
@@ -427,7 +431,10 @@ export const getAllRooms = async (req, res) => {
         const showtimesCollection = collection(db, 'showtimes');
         const showtimesQuery = query(showtimesCollection, orderBy('start_time','desc'));
         const showtimesSnapshot = await getDocs(showtimesQuery);
-        const showtimesList = showtimesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const showtimesList = showtimesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), 
+            formattedStartTime: doc.data().startTime.toDate().toLocaleString(),
+            formattedEndTime: doc.data().endTime.toDate().toLocaleString()
+        }));
 
         res.status(200).json(showtimesList);
     } catch (error) {
@@ -519,4 +526,105 @@ export const updateShowtimeById = async (req, res) => {
         console.error('Error fetching layout documents:', error);
         res.status(500).json({ error: 'Error fetching layout documents.' });
     }
+  }
+
+    // GET /getLayoutById2/:id
+    export const getLayoutById2 = async (req, res) => {
+        try {
+            const {id} = req.params;
+            const roomsCollection = dbadmin.collection('rooms');
+            const roomDocumentRef = roomsCollection.doc(id); 
+            const layoutCollectionRef = roomDocumentRef.collection('layout');
+    
+            const layoutSnapshot = await layoutCollectionRef.get();
+    
+            if (layoutSnapshot.empty) {
+                console.log('No layout documents found.');
+                res.status(404).json({ error: 'No layout documents found.' });
+                return;
+            }
+    
+            const layoutData = [];
+            layoutSnapshot.forEach(doc => {
+                layoutData.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+    
+            res.status(200).json(layoutData); 
+        } catch (error) {
+            console.error('Error fetching layout documents:', error);
+            res.status(500).json({ error: 'Error fetching layout documents.' });
+        }
+      }
+
+   // GET /getAmount/:id
+   export const getAmount = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Reference to the showtimes collection
+        const showtimesRef = collection(db, 'showtimes');
+
+        // Create a query against the collection to get showtimes for the given movie_id
+        const showtimesQuery = query(showtimesRef, where('movie_id', '==', id));
+
+        // Execute the showtimes query
+        const showtimesSnapshot = await getDocs(showtimesQuery);
+
+        // Extract showtime IDs
+        const showtimeIds = [];
+        showtimesSnapshot.forEach(doc => {
+            showtimeIds.push(doc.id);
+        });
+
+        if (showtimeIds.length === 0) {
+            return res.status(200).json({ seatCount: 0 });
+        }
+
+        // Reference to the seats collection
+        const seatsRef = collection(db, 'seats');
+
+        // Create a query to get all seats for the extracted showtime IDs
+        const seatsQuery = query(seatsRef, where('showtime_id', 'in', showtimeIds), where('status', '==', true));
+
+        // Execute the seats query
+        const seatsSnapshot = await getDocs(seatsQuery);
+
+        // Count the seats
+        const seatCount = seatsSnapshot.size;
+
+        const ordersRef = collection(db, 'orders');
+
+        // Create a query to get all orders for the extracted showtime IDs
+        const ordersQuery = query(ordersRef, where('showtime_id', 'in', showtimeIds));
+
+        // Execute the orders query
+        const ordersSnapshot = await getDocs(ordersQuery);
+
+        // Extract orders data
+        const orders = [];
+        ordersSnapshot.forEach(doc => {
+            orders.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Calculate total amount
+        let totalAmount = 0;
+        orders.forEach(order => {
+            // Assuming amount is a string representing a number, convert it to a float
+            const amount = parseFloat(order.amount);
+            if (!isNaN(amount)) {
+                totalAmount += amount;
+            }
+        });
+
+
+        // Send response
+        res.status(200).json({ seatCount, totalAmount });
+    } catch (error) {
+        console.error('Error getting seats count: ', error);
+        res.status(500).send('Internal Server Error');
+    }
+
   }
