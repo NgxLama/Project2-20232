@@ -23,8 +23,10 @@ const SeatForm = () => {
   const params = useParams();
   const room_id = params.id;
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const showtimeId = urlParams.get('showtime_id');
   useEffect(() => {
-    getAllSeatsOfRoom(room_id)
+    getAllSeatsOfRoom(room_id,showtimeId)
       .then((res) => {
         setSeats(res.data.seats);
         setIsLoading(false); // Đánh dấu dữ liệu đã được tải thành công

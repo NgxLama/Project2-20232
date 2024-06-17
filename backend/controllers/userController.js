@@ -1,6 +1,7 @@
 import Fuse from 'fuse.js';
 import Profile from '../models/profileModel.js';
 import db from '../firebase.js';
+import dbadmin from '../firebase-admin.js';
 import {
   collection,
   doc,
@@ -30,7 +31,7 @@ export const register = async (req, res, next) => {
   const password = req.body.password;
   createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
-      setDoc(doc(db, "profiles", userCredential.user.uid), {})
+      setDoc(doc(db, "profiles", userCredential.user.uid), {email: email,role:'user'})
         .then(() => {
           sendNotificationEmail(email);
           res.status(200).json({
@@ -54,6 +55,43 @@ export const register = async (req, res, next) => {
         })
       }
     });
+  // const auth = getAuth();
+  //   const email = req.body.email;
+  //   const password = req.body.password;
+
+  //   try {
+  //       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+  //       // Add email to the profile document in profiles collection
+  //       const userProfileRef = doc(db, "profiles", userCredential.user.uid);
+  //       await setDoc(userProfileRef, {
+  //           email: email,
+  //           role: 'user'
+  //       });
+
+  //       // Send notification email
+  //       sendNotificationEmail(email);
+
+  //       // Respond with success message
+  //       res.status(200).json({
+  //           status: true,
+  //           user: userCredential.user,
+  //           message: "Đăng ký thành công"
+  //       });
+  //   } catch (error) {
+  //       if (error.code === 'auth/email-already-in-use') {
+  //           res.status(200).json({
+  //               status: false,
+  //               message: "Email đã được sử dụng"
+  //           });
+  //       } else {
+  //           res.status(400).json({
+  //               status: false,
+  //               message: error.message
+  //           });
+  //       }
+  //   }
+
 }
 
 // POST /login
@@ -86,6 +124,77 @@ export const login = async (req, res, next) => {
       }
     });
 }
+// POST /loginAdmin
+export const loginAdmin = async (req, res, next) => {
+  // const auth = getAuth();
+  // const email = req.body.email;
+  // const password = req.body.password;
+  // signInWithEmailAndPassword(auth, email, password)
+  //   .then((userCredential) => {
+  //     res.status(200).json({
+  //       status: true,
+  //       user: userCredential.user,
+  //       message: "Đăng nhập thành công"
+  //     })
+  //   })
+  //   .catch((error) => {
+  //     if (error.code == 'auth/invalid-credential' || error.code == 'auth/missing-email') {
+  //       res.status(200).json({
+  //         status: false,
+  //         userId: null,
+  //         message: "Email hoặc mật khẩu không đúng"
+  //       })
+  //     }
+  //     else {
+  //       res.status(400).json({
+  //         status: false,
+  //         userId: null,
+  //         message: error.message
+  //       })
+  //     }
+  //   });
+
+  //   const userDoc = await dbadmin.collection('profiles').doc('BiOPA4NvZIZ1DgawBKRi3gZ4jC72').get();
+  //   console.log(userDoc.data().role === 'admin');
+  const auth = getAuth();
+  const email = req.body.email;
+  const password = req.body.password;
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // Fetch the user profile from the 'profiles' collection
+    const userDoc = await getDoc(doc(db, 'profiles', user.uid));
+
+    if (userDoc.exists() && userDoc.data().role === 'admin') {
+      res.status(200).json({
+        status: true,
+        user: user,
+        message: "Đăng nhập thành công"
+      });
+    } else {
+      res.status(403).json({
+        status: false,
+        message: "Không có quyền truy cập"
+      });
+    }
+  } catch (error) {
+    if (error.code === 'auth/invalid-credential' || error.code === 'auth/missing-email') {
+      res.status(200).json({
+        status: false,
+        userId: null,
+        message: "Email hoặc mật khẩu không đúng"
+      });
+    } else {
+      res.status(400).json({
+        status: false,
+        userId: null,
+        message: error.message
+      });
+    }
+  }
+}
 
 // POST /logout
 export const logout = async (req, res) => {
@@ -107,12 +216,14 @@ export const logout = async (req, res) => {
 
 
 export const getUserProfileById = async (req, res) => {
+  const user_id =req.params.idUser;
   const docRef = doc(db, "profiles", req.params.idUser);
   const docSnap = await getDoc(docRef);
   if(docSnap.exists()){
     res.status(200).json({
       status: true,
-      user: docSnap.data()
+      user: docSnap.data(),
+      user_id:user_id
     })
   } else {
     res.status(400).json({
@@ -191,4 +302,33 @@ export const updateProfile = async (req, res) => {
       })
     });
     if (!avatarCheck && !coverCheck) updateFirestore();
+}
+
+
+//GET /nameAndEmail
+export const getnameAndEmail = async (req, res) => {
+  try {
+    const querySnapshot = await getDocs(collection(db, "profiles"));
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      console.log(`Name: ${data.name}, Email: ${data.email}`);
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+  }
+};
+
+//GET /getAllProfiles
+export const getAllProfiles = async (req, res) => {
+  try {
+      const profilesSnapshot = await getDocs(collection(db, 'profiles'));;
+      const profiles = [];
+      profilesSnapshot.forEach(doc => {
+        profiles.push({ id: doc.id, ...doc.data() });
+      });
+      res.status(200).json(profiles);
+    } catch (error) {
+      console.error("Error fetching profiles: ", error);
+      res.status(500).send('Internal Server Error');
+    }
 }

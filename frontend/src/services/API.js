@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_BASE_URL = process.env.NODE_ENV === 'production' ? "https://web-20232.onrender.com" : "http://localhost:5000";
+const API_BASE_URL = process.env.NODE_ENV === 'production' ? "https://web-20232.onrender.com" : "http://localhost:5001";
 
 export function register(email, password) {
     return axios.post(`${API_BASE_URL}/register`, {
@@ -37,8 +37,8 @@ export function getMovieById(id) {
     return axios.get(`${API_BASE_URL}/getMovieById/${id}`)
 }
 
-export function getAllSeatsOfRoom(id) {
-    return axios.get(`${API_BASE_URL}/getAllSeatsOfRoom/${id}`)
+export function getAllSeatsOfRoom(id, showtime_id) {
+    return axios.get(`${API_BASE_URL}/getAllSeatsOfRoom/${id}?showtime_id=${showtime_id}`)
 }
 
 export function savePayment(order) {
